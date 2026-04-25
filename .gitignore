@@ -53,3 +53,14 @@ dkms.conf
 
 # debug information files
 *.dwo
+
+# Keil
+*.crf
+*.map
+*.axf
+
+# Person IDE
+*.uvguix.*
+
+# J-Link
+JLinkLog.txt
