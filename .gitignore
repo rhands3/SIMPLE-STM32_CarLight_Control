@@ -1,0 +1,14 @@
+*.o
+*.d
+*.crf
+*.lnp
+*.map
+*.hex
+*.axf
+*.htm
+*.lst
+*.bak
+Debug/
+Release/
+.metadata/
+*.launch
