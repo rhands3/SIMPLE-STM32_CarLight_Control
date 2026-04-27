@@ -38,6 +38,7 @@ KEY2 - PB13 需内部上拉。初始高电平，按下低电平。
 KEY3 - PB15 需内部上拉。初始高电平，按下低电平。
 USART2_TX - PA2 异步发送
 USART2_RX - PA3 接收
+I2C - SDA SCL 连接OLED 地址0x7A
 
 </details>
 
