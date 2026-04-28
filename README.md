@@ -99,6 +99,8 @@ distance = (float)(downEdge - upEdge) * 0.034f / 2.0f;
   
 </details> ```
 
+</details>
+
 ### 4.3 WS2812 灯带控制（PWM + DMA）
 
 <details>
