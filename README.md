@@ -97,7 +97,7 @@
 ```c
 distance = (float)(downEdge - upEdge) * 0.034f / 2.0f;
   
-<details>
+</details> ```
 
 ### 4.3 WS2812 灯带控制（PWM + DMA）
 
@@ -135,44 +135,54 @@ distance = (float)(downEdge - upEdge) * 0.034f / 2.0f;
 
 </details> ```
 
-### 4.4 状态机架构
+<details> <summary>📌 点击展开</summary>
 
-<details>
-<summary>📌 点击展开</summary>
+设计思想：
 
-**设计思想**：
-- 采用非阻塞状态机，避免 while 或 delay 造成的卡顿
-- 每个模块（按键、传感器、灯光）独立运行，主循环轮询状态
+    采用非阻塞状态机，避免 while 或 delay 造成的卡顿
 
-**系统状态定义**：
+    每个模块（按键、传感器、灯光）独立运行，主循环轮询状态
 
-| 状态 | 说明 |
-|------|------|
-| STATE_INIT | 初始化 / 主菜单 |
-| STATE_AUTO_HEADLIGHT | 自动大灯模式（基于光照） |
-| STATE_AHB | 自动远近光模式（基于距离） |
-| STATE_MANUAL_AHB | 手动远近光模式 |
-| STATE_LOWLIGHT | 近光 |
-| STATE_HIGHLIGHT | 远光 |
-| STATE_CORNER_LIGHT | 转向灯辅助模式（菜单） |
-| STATE_TURN_LEFT | 左转向流水灯 |
-| STATE_TURN_RIGHT | 右转向流水灯 |
-| STATE_HAZARD | 双闪警示模式 |
+系统状态定义：
 
-**状态迁移条件**：
-- KEY1：切换自动大灯 / 退出子模式
-- KEY2：切换自动远近光 / 近光/远光切换
-- KEY3（EC11）：进入/退出转向灯辅助模式
-- KEY1 + KEY2 同时按下：进入双闪模式
+    STATE_INIT：初始化 / 主菜单
 
-**非阻塞实现**：
-- 不使用 HAL_Delay，所有延时通过状态机和定时器变量实现
-- 每个状态只在进入时执行一次初始化，在循环中持续更新
+    STATE_AUTO_HEADLIGHT：自动大灯模式（基于光照）
+
+    STATE_AHB：自动远近光模式（基于距离）
+
+    STATE_MANUAL_AHB：手动远近光模式
+
+    STATE_LOWLIGHT / STATE_HIGHLIGHT：近光 / 远光
+
+    STATE_CORNER_LIGHT：转向灯辅助模式（菜单）
+
+    STATE_TURN_LEFT / STATE_TURN_RIGHT：左转向 / 右转向流水灯
+
+    STATE_HAZARD：双闪警示模式
+
+状态迁移条件：
+
+    KEY1：切换自动大灯 / 退出子模式
+
+    KEY2：切换自动远近光 / 近光/远光切换
+
+    KEY3（EC11）：进入/退出转向灯辅助模式
+
+    KEY1 + KEY2 同时按下：进入双闪模式
+
+非阻塞实现：
+
+    不使用 HAL_Delay，所有延时通过状态机和定时器变量实现
+
+    每个状态只在进入时执行一次初始化，在循环中持续更新
 
 </details>
 
-## 5. 代码结构
+### 5. 代码结构
+
 <details> <summary>📌 点击展开</summary>
+
 分类多个函数
 Core/
 --Src/
@@ -189,4 +199,5 @@ Core/
   --Sensor.h
   --state_machine.h
   --font.h              # 字库（ASCII + 中文）
+
   <details>
