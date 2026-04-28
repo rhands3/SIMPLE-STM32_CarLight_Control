@@ -108,12 +108,6 @@ distance = (float)(downEdge - upEdge) * 0.034f / 2.0f;
 ### 4.3 WS2812 灯带控制（PWM + DMA）
 
 <details>
-  
-<summary>📌 点击展开</summary>
-
-### 4.3 WS2812 灯带控制（PWM + DMA）
-
-<details>
 <summary>📌 点击展开</summary>
 
 **通信协议**：
