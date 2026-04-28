@@ -151,6 +151,8 @@ distance = (float)(downEdge - upEdge) * 0.034f / 2.0f;
 
 </details>
 
+---
+
 ### 5. 代码结构
 
 <details> <summary>📌 点击展开</summary>
@@ -173,3 +175,5 @@ Core/
   --font.h              # 字库（ASCII + 中文）
 
   <details>
+
+---
