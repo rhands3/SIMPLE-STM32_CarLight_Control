@@ -56,6 +56,8 @@
 
 ## 4. 关键技术点
 
+---
+
 ### 4.1 BH1750 光照传感器（I2C）
 
 <details>
@@ -68,6 +70,8 @@
 - **光照强度计算**：原始数据 / 1.2
 
 </details>
+
+---
 
 ### 4.2 超声波测距（输入捕获）
 
@@ -99,7 +103,7 @@ distance = (float)(downEdge - upEdge) * 0.034f / 2.0f;
 ```
 </details>
 
-
+---
 
 ### 4.3 WS2812 灯带控制（PWM + DMA）
 
@@ -108,38 +112,42 @@ distance = (float)(downEdge - upEdge) * 0.034f / 2.0f;
 <summary>📌 点击展开</summary>
 
 - 用RGB表示
-规定以800KHz进行
-强度0-255,16进制下0x00-0xFF
-时序 1/3周期 高电平 0 码 > 0.85us,2/3周期低电平 0 码 > 0.85us,2/3周期高电平 1码 > 0.85us,1/3周期低电平1码 > 0.4us,100周期低电平-Reset码 > 125us
-频繁变换电平采用PWM+DMA方式运行,加强CPU执行效率.
-计数器与比较寄存器值相等时触发DMA事件
-每90次自动重装载.即72MHz / 90 == 800KHz 刚好1.25us一次 , DMA从内存向外设搬运 - 将值输入给WS2812对应手册 定义变量a 30 b 60 ,a == 0.4 ,b == 0.8
-此WS2812顺序为GRB
+- 规定以800KHz进行
+- 强度0-255,16进制下0x00-0xFF
+- 时序 1/3周期 高电平 0 码 > 0.85us,2/3周期低电平 0 码 > 0.85us,2/3周期高电平 1码 > 0.85us,1/3周期低电平1码 > 0.4us,100周期低电平-Reset码 > 125us
+- 频繁变换电平采用PWM+DMA方式运行,加强CPU执行效率.
+- 计数器与比较寄存器值相等时触发DMA事件
+- 每90次自动重装载.即72MHz / 90 == 800KHz 刚好1.25us一次 , DMA从内存向外设搬运 - 将值输入给WS2812对应手册 定义变量a 30 b 60 ,a == 0.4 ,b == 0.8
+- 此WS2812顺序为GRB
 
 </details> 
+
+---
+
+### 4.3 状态机架构
 
 <details> <summary>📌 点击展开</summary>
 
 **设计思想**：
-    -采用非阻塞状态机，避免 while 或 delay 造成的卡顿
-    -每个模块（按键、传感器、灯光）独立运行，主循环轮询状态
+    采用非阻塞状态机，避免 while 或 delay 造成的卡顿
+    每个模块（按键、传感器、灯光）独立运行，主循环轮询状态
 **系统状态定义**：
-    -STATE_INIT：初始化 / 主菜单
-    -STATE_AUTO_HEADLIGHT：自动大灯模式（基于光照）
-    -STATE_AHB：自动远近光模式（基于距离）
-    -STATE_MANUAL_AHB：手动远近光模式
-    -STATE_LOWLIGHT / STATE_HIGHLIGHT：近光 / 远光
-    -STATE_CORNER_LIGHT：转向灯辅助模式（菜单）
-    -STATE_TURN_LEFT / STATE_TURN_RIGHT：左转向 / 右转向流水灯
-    -STATE_HAZARD：双闪警示模式
+    - STATE_INIT：初始化 / 主菜单
+    - STATE_AUTO_HEADLIGHT：自动大灯模式（基于光照）
+    - STATE_AHB：自动远近光模式（基于距离）
+    - STATE_MANUAL_AHB：手动远近光模式
+    - TATE_LOWLIGHT / STATE_HIGHLIGHT：近光 / 远光
+    - STATE_CORNER_LIGHT：转向灯辅助模式（菜单）
+    - STATE_TURN_LEFT / STATE_TURN_RIGHT：左转向 / 右转向流水灯
+    - STATE_HAZARD：双闪警示模式
 **状态迁移条件**：
-    -KEY1：切换自动大灯 / 退出子模式
-    -KEY2：切换自动远近光 / 近光/远光切换
-    -KEY3（EC11）：进入/退出转向灯辅助模式
-    -KEY1 + KEY2 同时按下：进入双闪模式
+    - KEY1：切换自动大灯 / 退出子模式
+    - KEY2：切换自动远近光 / 近光/远光切换
+    - KEY3（EC11）：进入/退出转向灯辅助模式
+    - KEY1 + KEY2 同时按下：进入双闪模式
 **非阻塞实现**：
-    -不使用 HAL_Delay，所有延时通过状态机和定时器变量实现
-    -每个状态只在进入时执行一次初始化，在循环中持续更新
+    - 不使用 HAL_Delay，所有延时通过状态机和定时器变量实现
+    - 每个状态只在进入时执行一次初始化，在循环中持续更新
 
 </details>
 
